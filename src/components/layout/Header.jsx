@@ -5,7 +5,7 @@ function Header() {
 
   return (
     <header>
-      <h1 class='text-center my-4' style={style}>
+      <h1 className='text-center my-4' style={style}>
         Expense Tracker
       </h1>
     </header>
