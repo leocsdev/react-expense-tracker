@@ -10,11 +10,11 @@ function ExpenseInfo({ expenses }) {
   // Should be coming from data
   let totalIncome = 1000
 
-  let expenseTotal = expenses.reduce((total, expense) => {
+  let totalExpense = expenses.reduce((total, expense) => {
     return total + expense.amount
   }, 0)
 
-  let totalBalance = totalIncome - expenseTotal
+  let totalBalance = totalIncome - totalExpense
 
   return (
     <section className='pb-4'>
@@ -33,7 +33,7 @@ function ExpenseInfo({ expenses }) {
         <Col sm={6}>
           <Card className='p-3'>
             <h5 className='to-upper mb-0'>Expense</h5>
-            <h4 className='mb-0 text-danger'>{currencyFormat(expenseTotal)}</h4>
+            <h4 className='mb-0 text-danger'>{currencyFormat(totalExpense)}</h4>
           </Card>
         </Col>
       </Row>

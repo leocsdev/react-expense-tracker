@@ -7,8 +7,8 @@ function ExpenseList({ expenses }) {
     <section className='py-4'>
       <h4>Expense History</h4>
       <ListGroup>
-        {expenses.map((expense) => (
-          <ExpenseItem key={expense.id} expense={expense} />
+        {expenses.map((expense, idx) => (
+          <ExpenseItem key={idx} expense={expense} />
         ))}
       </ListGroup>
     </section>
