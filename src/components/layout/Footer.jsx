@@ -3,7 +3,7 @@ function Footer() {
 
   return (
     <footer>
-      <p class='text-center'>All rights reserved {year}.</p>
+      <p className='text-center'>All rights reserved {year}.</p>
     </footer>
   )
 }
