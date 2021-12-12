@@ -1,6 +1,6 @@
 function Header() {
   const style = {
-    fontSize: '1.5rem',
+    fontSize: '1.75rem',
   }
 
   return (
