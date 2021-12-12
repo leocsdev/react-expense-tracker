@@ -1,13 +1,15 @@
 import { ListGroup } from 'react-bootstrap'
+import ExpenseItem from './ExpenseItem'
 
-function ExpenseList() {
+function ExpenseList({ expenses }) {
+  // console.log(expenses)
   return (
     <section className='py-4'>
       <h4>Expense History</h4>
       <ListGroup>
-        <ListGroup.Item>Cash</ListGroup.Item>
-        <ListGroup.Item>Book</ListGroup.Item>
-        <ListGroup.Item>Camera</ListGroup.Item>
+        {expenses.map((expense) => (
+          <ExpenseItem key={expense.id} expense={expense} />
+        ))}
       </ListGroup>
     </section>
   )
