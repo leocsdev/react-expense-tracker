@@ -13,7 +13,7 @@ function App() {
 
   return (
     <Layout>
-      <ExpenseInfo />
+      <ExpenseInfo expenses={expenses} />
 
       <ExpenseList expenses={expenses} />
 

@@ -1,25 +1,39 @@
 import { Card, Col, Row } from 'react-bootstrap'
 // import style from './ExpenseInfo.module.css'
 
-function ExpenseInfo() {
+function ExpenseInfo({ expenses }) {
+  // Currency Helper
+  const currencyFormat = (num) => {
+    return num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+  }
+
+  // Should be coming from data
+  let totalIncome = 1000
+
+  let expenseTotal = expenses.reduce((total, expense) => {
+    return total + expense.amount
+  }, 0)
+
+  let totalBalance = totalIncome - expenseTotal
+
   return (
     <section className='pb-4'>
       <Card className='text-center py-3 mb-3'>
         <h4 className='to-upper mb-0'>Your Balance</h4>
-        <h2 className='text-success mb-0'>260.00</h2>
+        <h2 className='text-success mb-0'>{currencyFormat(totalBalance)}</h2>
       </Card>
 
       <Row className='text-center'>
         <Col sm={6} className='mb-3 mb-sm-0'>
           <Card className='p-3'>
             <h5 className='to-upper mb-0'>Income</h5>
-            <h4 className='mb-0 text-warning'>500.00</h4>
+            <h4 className='mb-0 text-warning'>{currencyFormat(totalIncome)}</h4>
           </Card>
         </Col>
         <Col sm={6}>
           <Card className='p-3'>
             <h5 className='to-upper mb-0'>Expense</h5>
-            <h4 className='mb-0 text-danger'>240.00</h4>
+            <h4 className='mb-0 text-danger'>{currencyFormat(expenseTotal)}</h4>
           </Card>
         </Col>
       </Row>
