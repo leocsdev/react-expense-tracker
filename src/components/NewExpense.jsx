@@ -2,7 +2,13 @@ import { useRef, useState } from 'react'
 import { Button, FloatingLabel, Form } from 'react-bootstrap'
 
 function NewExpense({ addExpenseHandler }) {
+  const dateNow = () => {
+    const d = new Date()
+    return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`
+  }
+
   const [validated, setValidated] = useState(false)
+  const [currentDate, setCurrentDate] = useState(dateNow)
 
   const dateInputRef = useRef()
   const itemDescriptionInputRef = useRef()
@@ -11,7 +17,6 @@ function NewExpense({ addExpenseHandler }) {
   const addHandler = (e) => {
     e.preventDefault()
 
-    // console.log(`Added Item process goes here.`)
     const enteredDate = dateInputRef.current.value
     const enteredItemDescription = itemDescriptionInputRef.current.value
     const enteredAmount = amountInputRef.current.value
@@ -31,12 +36,17 @@ function NewExpense({ addExpenseHandler }) {
 
       addExpenseHandler(expenseData)
 
-      dateInputRef.current.value = ''
+      // dateInputRef.current.value = ''
       itemDescriptionInputRef.current.value = ''
       amountInputRef.current.value = ''
 
+      setCurrentDate(dateNow)
       setValidated(false)
     }
+  }
+
+  const dateChangeHandler = (e) => {
+    setCurrentDate(e.target.value)
   }
 
   return (
@@ -49,6 +59,8 @@ function NewExpense({ addExpenseHandler }) {
             type='date'
             placeholder='Date'
             ref={dateInputRef}
+            onChange={dateChangeHandler}
+            value={currentDate}
             required
           />
         </FloatingLabel>
