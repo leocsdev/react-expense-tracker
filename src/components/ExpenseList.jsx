@@ -1,7 +1,12 @@
+import { useContext } from 'react'
+import ExpensesContext from '../context/ExpensesContext'
+
 import { ListGroup } from 'react-bootstrap'
 import ExpenseItem from './ExpenseItem'
 
-function ExpenseList({ expenses }) {
+function ExpenseList() {
+  const { expenses } = useContext(ExpensesContext)
+
   let content
 
   if (expenses.length === 0) {

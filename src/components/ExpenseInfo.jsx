@@ -1,11 +1,11 @@
+import { useContext } from 'react'
+import ExpensesContext from '../context/ExpensesContext'
+
 import { Card, Col, Row } from 'react-bootstrap'
 // import style from './ExpenseInfo.module.css'
 
-function ExpenseInfo({ expenses }) {
-  // Currency Helper
-  const currencyFormat = (num) => {
-    return num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-  }
+function ExpenseInfo() {
+  const { expenses, currencyFormat } = useContext(ExpensesContext)
 
   // Should be coming from data
   let totalIncome = 1000

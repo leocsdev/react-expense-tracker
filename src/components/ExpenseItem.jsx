@@ -1,10 +1,15 @@
+import { useContext } from 'react'
+import ExpensesContext from '../context/ExpensesContext'
+
 import { Col, ListGroup, Row } from 'react-bootstrap'
 
 function ExpenseItem({ expense }) {
-  // Currency Helper
-  const currencyFormat = (num) => {
-    return num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-  }
+  const { currencyFormat } = useContext(ExpensesContext)
+
+  // // Currency Helper
+  // const currencyFormat = (num) => {
+  //   return num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+  // }
 
   return (
     <ListGroup.Item>

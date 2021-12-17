@@ -1,4 +1,4 @@
-import { useState } from 'react'
+// import { useState } from 'react'
 
 import Layout from './components/layout/Layout'
 
@@ -6,24 +6,23 @@ import ExpenseInfo from './components/ExpenseInfo'
 import ExpenseList from './components/ExpenseList'
 import NewExpense from './components/NewExpense'
 
-import expensesData from './data/expensesData'
+import { ExpensesProvider } from './context/ExpensesContext'
 
 function App() {
-  const [expenses, setExpenses] = useState(expensesData)
-
-  const addExpenseHandler = (expenseData) => {
-    // add expense
-    setExpenses([expenseData, ...expenses])
-  }
+  // const [expenses, setExpenses] = useState(expensesData)
 
   return (
-    <Layout>
-      <ExpenseInfo expenses={expenses} />
+    <ExpensesProvider>
+      <Layout>
+        {/* <ExpenseInfo expenses={expenses} /> */}
+        <ExpenseInfo />
 
-      <ExpenseList expenses={expenses} />
+        {/* <ExpenseList expenses={expenses} /> */}
+        <ExpenseList />
 
-      <NewExpense addExpenseHandler={addExpenseHandler} />
-    </Layout>
+        <NewExpense />
+      </Layout>
+    </ExpensesProvider>
   )
 }
 

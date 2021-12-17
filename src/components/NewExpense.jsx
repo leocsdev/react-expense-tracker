@@ -1,13 +1,19 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useContext } from 'react'
+import ExpensesContext from '../context/ExpensesContext'
+
 import { Button, FloatingLabel, Form } from 'react-bootstrap'
 
-function NewExpense({ addExpenseHandler }) {
+function NewExpense() {
+  const { addExpense } = useContext(ExpensesContext)
+
   const dateNow = () => {
     const d = new Date()
     return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`
   }
 
-  const [validated, setValidated] = useState(false)
+  // const [validated, setIsValidated] = useState(false)
+  const [isValidated, setIsValidated] = useState(false)
+
   const [currentDate, setCurrentDate] = useState(dateNow)
 
   const dateInputRef = useRef()
@@ -21,12 +27,14 @@ function NewExpense({ addExpenseHandler }) {
     const enteredItemDescription = itemDescriptionInputRef.current.value
     const enteredAmount = amountInputRef.current.value
 
-    if (
-      enteredDate === '' ||
-      enteredItemDescription === '' ||
-      enteredAmount === ''
-    ) {
-      setValidated(true)
+    // if (
+    //   enteredDate === '' ||
+    //   enteredItemDescription === '' ||
+    //   enteredAmount === ''
+    // )
+
+    if ([enteredDate, enteredItemDescription, enteredAmount].includes('')) {
+      setIsValidated(true)
     } else {
       const expenseData = {
         date: enteredDate,
@@ -34,14 +42,14 @@ function NewExpense({ addExpenseHandler }) {
         amount: parseFloat(enteredAmount),
       }
 
-      addExpenseHandler(expenseData)
+      addExpense(expenseData)
 
       // dateInputRef.current.value = ''
       itemDescriptionInputRef.current.value = ''
       amountInputRef.current.value = ''
 
       setCurrentDate(dateNow)
-      setValidated(false)
+      setIsValidated(false)
     }
   }
 
@@ -53,7 +61,7 @@ function NewExpense({ addExpenseHandler }) {
     <section className='py-4'>
       <h4>Add New Expense</h4>
 
-      <Form noValidate validated={validated}>
+      <Form noValidate validated={isValidated}>
         <FloatingLabel controlId='floatingInput' label='Date' className='mb-3'>
           <Form.Control
             type='date'
