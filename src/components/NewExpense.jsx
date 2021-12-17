@@ -1,8 +1,20 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useContext } from 'react'
+import ExpensesContext from '../context/ExpensesContext'
+
 import { Button, FloatingLabel, Form } from 'react-bootstrap'
 
-function NewExpense({ addExpenseHandler }) {
-  const [validated, setValidated] = useState(false)
+function NewExpense() {
+  const { addExpense } = useContext(ExpensesContext)
+
+  const dateNow = () => {
+    const d = new Date()
+    return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`
+  }
+
+  // const [validated, setIsValidated] = useState(false)
+  const [isValidated, setIsValidated] = useState(false)
+
+  const [currentDate, setCurrentDate] = useState(dateNow)
 
   const dateInputRef = useRef()
   const itemDescriptionInputRef = useRef()
@@ -11,17 +23,18 @@ function NewExpense({ addExpenseHandler }) {
   const addHandler = (e) => {
     e.preventDefault()
 
-    // console.log(`Added Item process goes here.`)
     const enteredDate = dateInputRef.current.value
     const enteredItemDescription = itemDescriptionInputRef.current.value
     const enteredAmount = amountInputRef.current.value
 
-    if (
-      enteredDate === '' ||
-      enteredItemDescription === '' ||
-      enteredAmount === ''
-    ) {
-      setValidated(true)
+    // if (
+    //   enteredDate === '' ||
+    //   enteredItemDescription === '' ||
+    //   enteredAmount === ''
+    // )
+
+    if ([enteredDate, enteredItemDescription, enteredAmount].includes('')) {
+      setIsValidated(true)
     } else {
       const expenseData = {
         date: enteredDate,
@@ -29,26 +42,33 @@ function NewExpense({ addExpenseHandler }) {
         amount: parseFloat(enteredAmount),
       }
 
-      addExpenseHandler(expenseData)
+      addExpense(expenseData)
 
-      dateInputRef.current.value = ''
+      // dateInputRef.current.value = ''
       itemDescriptionInputRef.current.value = ''
       amountInputRef.current.value = ''
 
-      setValidated(false)
+      setCurrentDate(dateNow)
+      setIsValidated(false)
     }
+  }
+
+  const dateChangeHandler = (e) => {
+    setCurrentDate(e.target.value)
   }
 
   return (
     <section className='py-4'>
       <h4>Add New Expense</h4>
 
-      <Form noValidate validated={validated}>
+      <Form noValidate validated={isValidated}>
         <FloatingLabel controlId='floatingInput' label='Date' className='mb-3'>
           <Form.Control
             type='date'
             placeholder='Date'
             ref={dateInputRef}
+            onChange={dateChangeHandler}
+            value={currentDate}
             required
           />
         </FloatingLabel>
