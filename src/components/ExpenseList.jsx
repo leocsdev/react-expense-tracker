@@ -16,8 +16,8 @@ function ExpenseList() {
       <>
         <h4>Expense History</h4>
         <ListGroup>
-          {expenses.map((expense, idx) => (
-            <ExpenseItem key={idx} expense={expense} />
+          {expenses.map((expense) => (
+            <ExpenseItem key={expense.id} expense={expense} />
           ))}
         </ListGroup>
       </>
