@@ -12,6 +12,7 @@ function ExpenseForm() {
 
   const [isValidated, setIsValidated] = useState(false)
   const [currentDate, setCurrentDate] = useState(dateNow)
+  const [text, setText] = useState('Add Expense')
 
   const { addExpense, updateExpense, expenseToEdit, setExpenseToEdit } =
     useContext(ExpensesContext)
@@ -26,6 +27,8 @@ function ExpenseForm() {
       dateInputRef.current.value = expenseToEdit.expense.date
       itemDescriptionInputRef.current.value = expenseToEdit.expense.item
       amountInputRef.current.value = expenseToEdit.expense.amount
+
+      setText('Update Expense')
     }
   }, [expenseToEdit])
 
@@ -51,8 +54,9 @@ function ExpenseForm() {
       if (expenseToEdit.edit === true) {
         updateExpense(expenseToEdit.expense.id, newExpense)
 
-        // Disable edit after update
+        // Disable edit after update and set text to default
         setExpenseToEdit((expenseToEdit.edit = false))
+        setText('Add Expense')
       } else {
         // Add expense item
         addExpense(newExpense)
@@ -72,7 +76,7 @@ function ExpenseForm() {
 
   return (
     <section className='py-4'>
-      <h4>Add New Expense</h4>
+      <h4>{text}</h4>
 
       <Form noValidate validated={isValidated} onSubmit={handleSubmit}>
         <FloatingLabel controlId='floatingInput' label='Date' className='mb-3'>
@@ -119,7 +123,7 @@ function ExpenseForm() {
             type='submit'
             className='btn-block'
           >
-            Add Expense
+            {text}
           </Button>
         </div>
       </Form>
