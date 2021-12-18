@@ -14,12 +14,8 @@ function App() {
   return (
     <ExpensesProvider>
       <Layout>
-        {/* <ExpenseInfo expenses={expenses} /> */}
         <ExpenseInfo />
-
-        {/* <ExpenseList expenses={expenses} /> */}
         <ExpenseList />
-
         <NewExpense />
       </Layout>
     </ExpensesProvider>
