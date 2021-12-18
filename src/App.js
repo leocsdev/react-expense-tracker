@@ -2,7 +2,7 @@ import Layout from './components/layout/Layout'
 
 import ExpenseInfo from './components/ExpenseInfo'
 import ExpenseList from './components/ExpenseList'
-import NewExpense from './components/NewExpense'
+import ExpenseForm from './components/ExpenseForm'
 
 import { ExpensesProvider } from './context/ExpensesContext'
 
@@ -12,7 +12,7 @@ function App() {
       <Layout>
         <ExpenseInfo />
         <ExpenseList />
-        <NewExpense />
+        <ExpenseForm />
       </Layout>
     </ExpensesProvider>
   )

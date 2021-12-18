@@ -1,53 +1,66 @@
-import { useRef, useState, useContext } from 'react'
+import { useRef, useState, useEffect, useContext } from 'react'
 import ExpensesContext from '../context/ExpensesContext'
 
 import { Button, FloatingLabel, Form } from 'react-bootstrap'
 
-function NewExpense() {
-  const { addExpense } = useContext(ExpensesContext)
-
+function ExpenseForm() {
+  // Autofill date helper
   const dateNow = () => {
     const d = new Date()
     return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`
   }
 
-  // const [validated, setIsValidated] = useState(false)
   const [isValidated, setIsValidated] = useState(false)
-
   const [currentDate, setCurrentDate] = useState(dateNow)
+
+  const { addExpense, updateExpense, expenseToEdit, setExpenseToEdit } =
+    useContext(ExpensesContext)
 
   const dateInputRef = useRef()
   const itemDescriptionInputRef = useRef()
   const amountInputRef = useRef()
 
-  const addHandler = (e) => {
+  // Fill out form with selected expense itme when edit icon is clicked
+  useEffect(() => {
+    if (expenseToEdit.edit === true) {
+      dateInputRef.current.value = expenseToEdit.expense.date
+      itemDescriptionInputRef.current.value = expenseToEdit.expense.item
+      amountInputRef.current.value = expenseToEdit.expense.amount
+    }
+  }, [expenseToEdit])
+
+  const handleSubmit = (e) => {
     e.preventDefault()
 
     const enteredDate = dateInputRef.current.value
     const enteredItemDescription = itemDescriptionInputRef.current.value
     const enteredAmount = amountInputRef.current.value
 
-    // if (
-    //   enteredDate === '' ||
-    //   enteredItemDescription === '' ||
-    //   enteredAmount === ''
-    // )
-
+    // Refactored, Courtesy of sir Jami
+    // If any of the form fields are empty, do not save the item
     if ([enteredDate, enteredItemDescription, enteredAmount].includes('')) {
       setIsValidated(true)
     } else {
-      const expenseData = {
+      const newExpense = {
         date: enteredDate,
         item: enteredItemDescription,
         amount: parseFloat(enteredAmount),
       }
 
-      addExpense(expenseData)
+      // If edit icon is clicked, do the update
+      if (expenseToEdit.edit === true) {
+        updateExpense(expenseToEdit.expense.id, newExpense)
 
-      // dateInputRef.current.value = ''
+        // Disable edit after update
+        setExpenseToEdit((expenseToEdit.edit = false))
+      } else {
+        // Add expense item
+        addExpense(newExpense)
+      }
+
+      // Reset form after add or update
       itemDescriptionInputRef.current.value = ''
       amountInputRef.current.value = ''
-
       setCurrentDate(dateNow)
       setIsValidated(false)
     }
@@ -61,7 +74,7 @@ function NewExpense() {
     <section className='py-4'>
       <h4>Add New Expense</h4>
 
-      <Form noValidate validated={isValidated}>
+      <Form noValidate validated={isValidated} onSubmit={handleSubmit}>
         <FloatingLabel controlId='floatingInput' label='Date' className='mb-3'>
           <Form.Control
             type='date'
@@ -101,7 +114,7 @@ function NewExpense() {
 
         <div className='d-grid'>
           <Button
-            onClick={addHandler}
+            // onClick={addHandler}
             variant='primary'
             type='submit'
             className='btn-block'
@@ -114,4 +127,4 @@ function NewExpense() {
   )
 }
 
-export default NewExpense
+export default ExpenseForm
