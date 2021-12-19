@@ -1,12 +1,23 @@
-import { createContext, useState } from 'react'
-import { v4 as uuidv4 } from 'uuid'
+import { createContext, useEffect, useState } from 'react'
+import { db } from '../firebase-config'
 
-import expensesData from '../data/expensesData'
+import {
+  collection,
+  doc,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+} from 'firebase/firestore'
 
 const ExpensesContext = createContext()
 
 export const ExpensesProvider = ({ children }) => {
-  const [expenses, setExpenses] = useState(expensesData)
+  // Expenses collection reference from firebase
+  const expensesCollectionRef = collection(db, 'expenses')
+
+  // Initialize expenses list
+  const [expenses, setExpenses] = useState([])
 
   // initialize expense to edit
   const [expenseToEdit, setExpenseToEdit] = useState({
@@ -14,36 +25,57 @@ export const ExpensesProvider = ({ children }) => {
     edit: false,
   })
 
+  useEffect(() => {
+    // Get all expenses from firebase
+    const fetchExpenses = async () => {
+      const data = await getDocs(expensesCollectionRef)
+
+      setExpenses(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    }
+
+    fetchExpenses()
+  }, [expensesCollectionRef])
+
   // Add expense
-  const addExpense = (expense) => {
-    expense.id = uuidv4()
-    setExpenses([expense, ...expenses])
+  const addExpense = async (expense) => {
+    const newExpense = {
+      date: expense.date,
+      item: expense.item,
+      amount: expense.amount,
+    }
+
+    await addDoc(expensesCollectionRef, newExpense)
   }
 
   // Edit expense
   // Set the expense item to update and render to form
   // expense coming from the clicked edit icon
   const editExpense = (expense) => {
-    console.log(`Edit item: ${expense}`)
-
     setExpenseToEdit({ expense, edit: true })
   }
 
   // Update expense
-  const updateExpense = (id, updExpense) => {
-    setExpenses(
-      expenses.map((expense) =>
-        expense.id === id ? { ...expense, ...updExpense } : expense
-      )
-    )
+  const updateExpense = async (id, updExpense) => {
+    // Get the specific expense document from firebase
+    const expenseDoc = doc(db, 'expenses', id)
+
+    // Modify age with its new value
+    const newUpdExpense = {
+      date: updExpense.date,
+      item: updExpense.item,
+      amount: updExpense.amount,
+    }
+
+    await updateDoc(expenseDoc, newUpdExpense)
   }
 
   // Delete expense
-  const deleteExpense = (id) => {
-    console.log(`Delete id: ${id}`)
-
+  const deleteExpense = async (id) => {
     if (window.confirm('Are you sure you want to delete an item?')) {
-      setExpenses(expenses.filter((expense) => expense.id !== id))
+      // Get the specific expense document from firebase
+      const expenseDoc = doc(db, 'expenses', id)
+
+      await deleteDoc(expenseDoc)
     }
   }
 
