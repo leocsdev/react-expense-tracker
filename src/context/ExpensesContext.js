@@ -1,20 +1,9 @@
 import { createContext, useEffect, useState } from 'react'
-import { db } from '../firebase-config'
-
-import {
-  collection,
-  doc,
-  getDocs,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-} from 'firebase/firestore'
 
 const ExpensesContext = createContext()
 
 export const ExpensesProvider = ({ children }) => {
-  // Expenses collection reference from firebase
-  const expensesCollectionRef = collection(db, 'expenses')
+  const [isLoading, setIsLoading] = useState(true)
 
   // Initialize expenses list
   const [expenses, setExpenses] = useState([])
@@ -26,25 +15,53 @@ export const ExpensesProvider = ({ children }) => {
   })
 
   useEffect(() => {
-    // Get all expenses from firebase
+    // Get all expenses data
     const fetchExpenses = async () => {
-      const data = await getDocs(expensesCollectionRef)
+      const response = await fetch('/expenses.json')
 
-      setExpenses(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+      const data = await response.json()
+
+      const expensesData = []
+
+      for (const key in data) {
+        const expense = {
+          id: key,
+          ...data[key],
+        }
+
+        expensesData.push(expense)
+      }
+
+      setExpenses(expensesData)
+      setIsLoading(false)
     }
 
     fetchExpenses()
-  }, [expensesCollectionRef])
+    console.log(`from ExpenseContext useEffect`)
+  }, [])
 
   // Add expense
   const addExpense = async (expense) => {
+    const response = await fetch('/expenses.json', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(expense),
+    })
+
+    // returns only the unique key (id)
+    const data = await response.json()
+
     const newExpense = {
+      id: data.name,
       date: expense.date,
       item: expense.item,
       amount: expense.amount,
     }
 
-    await addDoc(expensesCollectionRef, newExpense)
+    // console.log(newExpense)
+    setExpenses([newExpense, ...expenses])
   }
 
   // Edit expense
@@ -56,26 +73,37 @@ export const ExpensesProvider = ({ children }) => {
 
   // Update expense
   const updateExpense = async (id, updExpense) => {
-    // Get the specific expense document from firebase
-    const expenseDoc = doc(db, 'expenses', id)
+    const response = await fetch(`/expenses/${id}.json`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updExpense),
+    })
 
-    // Modify age with its new value
+    const data = await response.json()
+
     const newUpdExpense = {
-      date: updExpense.date,
-      item: updExpense.item,
-      amount: updExpense.amount,
+      id: id,
+      date: data.date,
+      item: data.item,
+      amount: data.amount,
     }
 
-    await updateDoc(expenseDoc, newUpdExpense)
+    setExpenses(
+      expenses.map((expense) =>
+        expense.id === id ? { ...expense, ...newUpdExpense } : expense
+      )
+    )
   }
 
-  // Delete expense
   const deleteExpense = async (id) => {
     if (window.confirm('Are you sure you want to delete an item?')) {
-      // Get the specific expense document from firebase
-      const expenseDoc = doc(db, 'expenses', id)
+      await fetch(`/expenses/${id}.json`, {
+        method: 'DELETE',
+      })
 
-      await deleteDoc(expenseDoc)
+      setExpenses(expenses.filter((expense) => expense.id !== id))
     }
   }
 
@@ -89,6 +117,7 @@ export const ExpensesProvider = ({ children }) => {
       value={{
         expenses,
         expenseToEdit,
+        isLoading,
         setExpenseToEdit,
         addExpense,
         editExpense,
